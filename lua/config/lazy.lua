@@ -180,7 +180,7 @@ require("lazy").setup({
   },
   {
     "stevearc/oil.nvim",
-    cmd = "Oil",
+    lazy = false,
     keys = { { "<leader>e", "<cmd>Oil<cr>", desc = "Open file explorer" } },
     opts = {
       default_file_explorer = true,

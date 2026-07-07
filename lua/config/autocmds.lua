@@ -24,3 +24,16 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.highlight.on_yank({ timeout = 150 })
   end,
 })
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = group,
+  callback = function()
+    if vim.fn.argc() > 0 or vim.api.nvim_buf_get_name(0) ~= "" or vim.bo.buftype ~= "" then
+      return
+    end
+
+    vim.schedule(function()
+      vim.cmd.Oil()
+    end)
+  end,
+})
