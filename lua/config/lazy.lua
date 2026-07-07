@@ -8,6 +8,33 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local treesitter_languages = {
+  "bash",
+  "css",
+  "diff",
+  "git_config",
+  "git_rebase",
+  "gitattributes",
+  "gitcommit",
+  "gitignore",
+  "html",
+  "javascript",
+  "jsdoc",
+  "json",
+  "json5",
+  "lua",
+  "luadoc",
+  "markdown",
+  "markdown_inline",
+  "regex",
+  "toml",
+  "tsx",
+  "typescript",
+  "vim",
+  "vimdoc",
+  "yaml",
+}
+
 require("lazy").setup({
   {
     "Mofiqul/vscode.nvim",
@@ -25,42 +52,65 @@ require("lazy").setup({
 
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
-    build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
-    opts = {
-      ensure_installed = {
-        "bash",
-        "css",
-        "diff",
-        "git_config",
-        "git_rebase",
-        "gitattributes",
-        "gitcommit",
-        "gitignore",
-        "html",
-        "javascript",
-        "jsdoc",
-        "json",
-        "json5",
-        "jsonc",
-        "lua",
-        "luadoc",
-        "markdown",
-        "markdown_inline",
-        "regex",
-        "toml",
-        "tsx",
-        "typescript",
-        "vim",
-        "vimdoc",
-        "yaml",
-      },
-      highlight = { enable = true },
-      indent = { enable = true },
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+    branch = "main",
+    lazy = false,
+    build = function()
+      if vim.fn.executable("tree-sitter") == 0 then
+        vim.notify("nvim-treesitter parser updates require the tree-sitter CLI", vim.log.levels.WARN)
+        return
+      end
+
+      local treesitter = require("nvim-treesitter")
+      if type(treesitter.install) == "function" then
+        treesitter.install(treesitter_languages):wait(300000)
+      else
+        vim.cmd.TSUpdate()
+      end
+    end,
+    config = function()
+      local treesitter = require("nvim-treesitter")
+
+      if type(treesitter.install) ~= "function" then
+        require("nvim-treesitter.configs").setup({
+          ensure_installed = treesitter_languages,
+          highlight = { enable = true },
+          indent = { enable = true },
+        })
+        return
+      end
+
+      vim.treesitter.language.register("json", "jsonc")
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = {
+          "bash",
+          "css",
+          "diff",
+          "gitattributes",
+          "gitcommit",
+          "gitconfig",
+          "gitignore",
+          "html",
+          "javascript",
+          "javascriptreact",
+          "json",
+          "json5",
+          "jsonc",
+          "lua",
+          "markdown",
+          "sh",
+          "toml",
+          "typescript",
+          "typescriptreact",
+          "vim",
+          "vimdoc",
+          "yaml",
+        },
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+          vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
+      })
     end,
   },
 
