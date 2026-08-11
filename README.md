@@ -4,7 +4,13 @@ Fast terminal-focused Neovim setup for Git commits, TypeScript, JSON, TOML, YAML
 
 ## First launch
 
-Open Neovim and let `lazy.nvim` install plugins:
+Install the Treesitter CLI before opening Neovim. The `nvim-treesitter` `main` branch needs it to compile parsers; without it, highlighting falls back to Vim syntax (noticeable in Git commit messages):
+
+```sh
+brew install tree-sitter-cli
+```
+
+Open Neovim and let `lazy.nvim` install plugins (and Treesitter parsers):
 
 ```sh
 nvim
