@@ -32,6 +32,8 @@ vim.opt.sidescrolloff = 8
 
 vim.opt.undofile = true
 vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.writebackup = false
 vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 
