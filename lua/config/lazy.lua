@@ -266,6 +266,9 @@ require("lazy").setup({
   },
 }, {
   install = { colorscheme = { "vscode" } },
+  performance = {
+    rtp = { reset = false },
+  },
   rocks = { enabled = false },
   checker = { enabled = true, notify = false },
   change_detection = { notify = false },
